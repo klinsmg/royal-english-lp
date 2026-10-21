@@ -253,3 +253,6 @@ a,button,[role=button]{touch-action:manipulation}
 .vsl.is-lite .vsl-chapters button,.vsl.is-lite .vsl-tick{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .vsl.is-lite .vsl-chapters button{min-height:2.75rem;min-width:2.75rem}
 @keyframes vsl-in{from{opacity:0;transform:translate3d(0,14px,0)}}
+
+/* mobile: a etiqueta da VSL não encosta no header (que termina em ~81px) */
+@media (max-width:1023px){.vsl.is-pinned .vsl-stage{padding-top:5.6rem}}
