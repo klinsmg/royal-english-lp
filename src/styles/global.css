@@ -240,13 +240,16 @@ a,button,[role=button]{touch-action:manipulation}
 .pin-spacer{background:#071525}
 
 /* VSL leve (celular): troca de cena por classe, só opacity/transform */
-.vsl.is-lite .vsl-scene{opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s}
-.vsl.is-lite .vsl-scene.is-on{opacity:1;visibility:visible;transition:opacity .35s ease}
-.vsl.is-lite .selo{opacity:0;transition:opacity .3s}
+.vsl.is-lite .vsl-stage{touch-action:pan-y}
+.vsl.is-lite .vsl-scene{opacity:0;visibility:hidden;transform:translate3d(0,18px,0);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1),visibility 0s linear .5s}
+.vsl.is-lite .vsl-scene.is-past{transform:translate3d(0,-18px,0)}
+.vsl.is-lite .vsl-scene.is-on{opacity:1;visibility:visible;transform:none;transition:opacity .5s cubic-bezier(.22,1,.36,1) .12s,transform .5s cubic-bezier(.22,1,.36,1) .12s}
+.vsl.is-lite .selo{opacity:0;transition:opacity .35s}
 .vsl.is-lite .selo.is-on{opacity:1}
-.vsl.is-lite [data-bg="1"],.vsl.is-lite [data-bg="2"]{opacity:0;transition:opacity .6s}
+.vsl.is-lite [data-bg="1"],.vsl.is-lite [data-bg="2"]{opacity:0;transition:opacity .8s ease}
 .vsl.is-lite [data-bg].is-on{opacity:1}
-.vsl.is-lite .vsl-fill{transition:transform .4s ease}
-.vsl.is-lite .vsl-scene.is-on [data-in]{animation:vsl-in .5s ease-out both}
-@keyframes vsl-in{from{opacity:0;transform:translateY(16px)}}
-.vsl.is-lite .vsl-hint{display:none}
+.vsl.is-lite .vsl-fill{transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.vsl.is-lite .vsl-scene.is-on [data-in]{animation:vsl-in .6s cubic-bezier(.22,1,.36,1) both;animation-delay:calc(.12s + var(--d,0)*60ms)}
+.vsl.is-lite .vsl-chapters button,.vsl.is-lite .vsl-tick{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.vsl.is-lite .vsl-chapters button{min-height:2.75rem;min-width:2.75rem}
+@keyframes vsl-in{from{opacity:0;transform:translate3d(0,14px,0)}}

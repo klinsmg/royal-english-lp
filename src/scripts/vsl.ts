@@ -151,15 +151,20 @@ export function initVsl() {
     };
   };
 
-  // Celular em pé: as cenas passam sozinhas (sem rolagem presa e sem pin), só enquanto a seção está na tela
-  const DURS = [6000, 6000, 6500, 8000, 10000, 9000, 7000]; // tempo de leitura de cada cena (ms)
-  const autoplay = () => {
+  // Celular em pé: mesma sessão fixa, mas as cenas trocam por classe (transição CSS), sem timeline presa à rolagem: leve em aparelhos simples
+  const pinnedLite = () => {
+    const stage_ = root.querySelector<HTMLElement>('.vsl-stage')!;
     const n = scenes.length;
+    const W = WEIGHTS_ALL.slice(0, n);
+    const TOTAL = W.reduce((a, b) => a + b, 0);
+    const STARTS = W.map((_, i) => W.slice(0, i).reduce((a, b) => a + b, 0));
     const counts = q<HTMLElement>('[data-count]');
     const steps = q<HTMLElement>('[data-step]');
     const done = new Set<number>();
     root.classList.add('is-pinned', 'is-lite');
     fit();
+    // atraso em cascata da entrada dos itens de cada cena (CSS usa --d)
+    scenes.forEach((sc) => sc.querySelectorAll<HTMLElement>('[data-in]').forEach((el, k) => el.style.setProperty('--d', String(Math.min(k, 8)))));
     counts.forEach((el) => (el.textContent = '00'));
     gsap.set('[data-stroke]', { scaleY: 0 });
     gsap.set('[data-trail-line-method]', { scaleY: 0 });
@@ -183,11 +188,9 @@ export function initVsl() {
       if (i === 5) gsap.to('[data-stroke]', { scaleY: 1, duration: 0.5, stagger: 0.08, delay: 0.5 });
     };
 
-    let cur = 0;
-    let timer = 0;
+    let active = -1;
     const show = (i: number) => {
-      cur = i;
-      scenes.forEach((sc, k) => { sc.classList.toggle('is-on', k === i); sc.classList.toggle('is-off', k !== i); });
+      scenes.forEach((sc, k) => { sc.classList.toggle('is-on', k === i); sc.classList.toggle('is-past', k < i); sc.classList.toggle('is-off', k !== i); });
       tags.forEach((tg, k) => tg.classList.toggle('is-on', k === i));
       bgs.forEach((b, k) => b.classList.toggle('is-on', k === 0 || (k === 1 ? i === 3 : i >= 4)));
       chapters.forEach((c) => c.toggleAttribute('data-active', i >= Number(c.dataset.from) && i <= Number(c.dataset.to)));
@@ -196,29 +199,46 @@ export function initVsl() {
       bar.style.transform = `scaleX(${reached / (ticks.length - 1)})`;
       enter(i);
     };
-    const stop = () => clearTimeout(timer);
-    const play = () => {
-      stop();
-      if (cur >= n - 1) return; // a última cena fica parada
-      timer = window.setTimeout(() => { show(cur + 1); play(); }, DURS[cur]);
-    };
     show(0);
 
-    // só corre enquanto a seção está na tela
-    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? play() : stop()), { threshold: 0.5 });
-    io.observe(root);
+    const st = ScrollTrigger.create({
+      trigger: root,
+      start: 'top top',
+      end: () => '+=' + window.innerHeight * 0.8 * n,
+      pin: true,
+      anticipatePin: 1,
+      refreshPriority: 1,
+      // a rolagem sempre para com uma cena inteira na tela
+      snap: { snapTo: STARTS.map((s, i) => (s + W[i] / 2) / TOTAL), duration: { min: 0.2, max: 0.5 }, delay: 0.06, ease: 'power1.inOut', inertia: false },
+      onUpdate: (self) => {
+        root.classList.toggle('is-scrolled', self.progress > 0.01);
+        const t = self.progress * TOTAL;
+        let idx = 0;
+        STARTS.forEach((s, i) => { if (t >= s) idx = i; });
+        if (idx !== active) { active = idx; show(idx); }
+      },
+    });
 
-    goTo = (i) => {
-      if (Math.abs(root.getBoundingClientRect().top) > 8) root.scrollIntoView({ behavior: 'smooth' });
-      show(i);
-      play();
+    const go = (i: number) => window.scrollTo({ top: st.start + ((STARTS[i] + W[i] / 2) / TOTAL) * (st.end - st.start), behavior: 'smooth' });
+    goTo = go;
+
+    // arrastar para o lado troca de cena (rolar para cima/baixo continua nativo)
+    let x0 = 0, y0 = 0;
+    const down = (e: TouchEvent) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; };
+    const up = (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      const next = Math.max(0, Math.min(n - 1, (active < 0 ? 0 : active) + (dx < 0 ? 1 : -1)));
+      go(next);
     };
+    stage_.addEventListener('touchstart', down, { passive: true });
+    stage_.addEventListener('touchend', up, { passive: true });
 
     return () => {
-      stop();
-      io.disconnect();
-      root.classList.remove('is-pinned', 'is-lite');
-      [...scenes, ...tags, ...bgs].forEach((e) => e.classList.remove('is-on', 'is-off'));
+      stage_.removeEventListener('touchstart', down);
+      stage_.removeEventListener('touchend', up);
+      root.classList.remove('is-pinned', 'is-lite', 'is-scrolled');
+      [...scenes, ...tags, ...bgs].forEach((e) => e.classList.remove('is-on', 'is-off', 'is-past'));
       steps.forEach((s) => s.classList.remove('is-lit'));
       counts.forEach((el) => (el.textContent = '0' + el.dataset.count));
       bar.style.transform = '';
@@ -236,8 +256,8 @@ export function initVsl() {
   // ---------- Tablet em pé: a mesma sessão fixa, com as 7 cenas ----------
   mm.add('(min-width: 768px) and (max-width: 1023px) and (min-height: 560px)', () => pinned(WEIGHTS_ALL.length, true));
 
-  // ---------- Celular em pé: apresentação automática ----------
-  mm.add('(max-width: 767px) and (min-height: 560px)', () => autoplay());
+  // ---------- Celular em pé: sessão fixa leve ----------
+  mm.add('(max-width: 767px) and (min-height: 560px)', () => pinnedLite());
 
   // ---------- Celular deitado (pouca altura): cenas empilhadas, rolagem normal ----------
   mm.add('(max-width: 1023px) and (max-height: 559px)', () => {
