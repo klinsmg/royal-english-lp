@@ -245,6 +245,10 @@ a,button,[role=button]{touch-action:manipulation}
 
 /* VSL leve (celular): troca de cena por classe, só opacity/transform */
 .vsl.is-lite .vsl-stage{touch-action:pan-y}
+/* no Chromium pan-up libera o dedo p/ baixo (a página sobe) e pan-down o dedo p/ cima (a página desce) */
+.vsl.is-lite .vsl-stage[data-edge=first]{touch-action:pan-up}
+.vsl.is-lite .vsl-stage[data-edge=last]{touch-action:pan-down}
+.vsl.is-lite .vsl-stage[data-edge=mid]{touch-action:none}
 .vsl.is-lite .vsl-scene{opacity:0;visibility:hidden;transform:translate3d(0,18px,0);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1),visibility 0s linear .5s}
 .vsl.is-lite .vsl-scene.is-past{transform:translate3d(0,-18px,0)}
 .vsl.is-lite .vsl-scene.is-on{opacity:1;visibility:visible;transform:none;transition:opacity .5s cubic-bezier(.22,1,.36,1) .12s,transform .5s cubic-bezier(.22,1,.36,1) .12s}

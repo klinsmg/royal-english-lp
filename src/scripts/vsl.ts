@@ -175,6 +175,8 @@ export function initVsl() {
     const counts = q<HTMLElement>('[data-count]');
     const steps = q<HTMLElement>('[data-step]');
     const done = new Set<number>();
+    // ponto de parada de cada cena (0 a 1 do trecho): a 1ª no início e a última no fim, para a saída da seção ser imediata
+    const POS = STARTS.map((s, i) => (i === 0 ? 0 : i === n - 1 ? 1 : (s + W[i] / 2) / TOTAL));
     root.classList.add('is-pinned', 'is-lite');
     const sticky = stick(0.8 * n);
     fit();
@@ -213,6 +215,8 @@ export function initVsl() {
       ticks.forEach((m, j) => { m.dataset.s = j > reached ? '' : j === reached ? 'on' : 'past'; });
       bar.style.transform = `scaleX(${reached / (ticks.length - 1)})`;
       enter(i);
+      // toque: livre só na 1ª (sair por cima) e na última (sair por baixo); nas do meio a página fica fixa
+      stage_.dataset.edge = i <= 0 ? 'first' : i >= n - 1 ? 'last' : 'mid';
     };
     show(0);
 
@@ -222,7 +226,7 @@ export function initVsl() {
       end: 'bottom bottom',
       refreshPriority: 1,
       // a rolagem sempre para com uma cena inteira na tela
-      snap: { snapTo: STARTS.map((s, i) => (s + W[i] / 2) / TOTAL), duration: { min: 0.2, max: 0.5 }, delay: 0.06, ease: 'power1.inOut', inertia: false },
+      snap: { snapTo: POS, directional: false, duration: { min: 0.2, max: 0.5 }, delay: 0.06, ease: 'power1.inOut', inertia: false },
       onUpdate: (self) => {
         root.classList.toggle('is-scrolled', self.progress > 0.01);
         const t = self.progress * TOTAL;
@@ -232,17 +236,24 @@ export function initVsl() {
       },
     });
 
-    const go = (i: number) => window.scrollTo({ top: st.start + ((STARTS[i] + W[i] / 2) / TOTAL) * (st.end - st.start), behavior: 'smooth' });
+    const go = (i: number) => window.scrollTo({ top: st.start + POS[i] * (st.end - st.start), behavior: 'smooth' });
     goTo = go;
 
-    // arrastar para o lado troca de cena (rolar para cima/baixo continua nativo)
-    let x0 = 0, y0 = 0;
+    // gesto troca de cena: para o lado, ou na vertical (dedo p/ cima = próxima). Na 1ª cena o dedo p/ baixo e na última o dedo p/ cima são nativos (saída da seção)
+    let x0 = 0, y0 = 0, lockUntil = 0;
     const down = (e: TouchEvent) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; };
     const up = (e: TouchEvent) => {
       const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
-      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-      const next = Math.max(0, Math.min(n - 1, (active < 0 ? 0 : active) + (dx < 0 ? 1 : -1)));
-      go(next);
+      const cur = active < 0 ? 0 : active;
+      let step = 0;
+      if (Math.abs(dx) >= 50 && Math.abs(dx) >= Math.abs(dy) * 1.5) step = dx < 0 ? 1 : -1;
+      else if (Math.abs(dy) >= 50 && Math.abs(dy) >= Math.abs(dx) * 1.5) {
+        step = dy < 0 ? 1 : -1;
+        if ((cur === 0 && step < 0) || (cur === n - 1 && step > 0)) return;
+      }
+      if (!step || performance.now() < lockUntil) return;
+      lockUntil = performance.now() + 450;
+      go(Math.max(0, Math.min(n - 1, cur + step)));
     };
     stage_.addEventListener('touchstart', down, { passive: true });
     stage_.addEventListener('touchend', up, { passive: true });
@@ -250,6 +261,7 @@ export function initVsl() {
     return () => {
       stage_.removeEventListener('touchstart', down);
       stage_.removeEventListener('touchend', up);
+      delete stage_.dataset.edge;
       sticky.undo();
       root.classList.remove('is-pinned', 'is-lite', 'is-scrolled');
       [...scenes, ...tags, ...bgs].forEach((e) => e.classList.remove('is-on', 'is-off', 'is-past'));
