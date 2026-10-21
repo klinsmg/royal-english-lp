@@ -1,0 +1,49 @@
+# Segredos e variáveis de ambiente
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+id_rsa*
+id_ed25519*
+secrets/
+credentials*
+service-account*.json
+.npmrc
+.netrc
+
+# Dependências e build
+node_modules/
+dist/
+.astro/
+.vercel/
+.netlify/
+.wrangler/
+
+# Backups, referências e material interno
+backups/
+_ref/
+*.zip
+*.bak
+*.orig
+
+# Ferramentas de IA / editor / sistema
+.claude/
+.claude-mem/
+.playwright-mcp/
+CLAUDE.md
+AGENTS.md
+.cursor/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*

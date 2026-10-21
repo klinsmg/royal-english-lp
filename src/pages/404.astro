@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Página não encontrada | Royal English" description="A página que você procurou não existe ou foi movida." legal noindex>
+  <div class="flex h-svh flex-col">
+  <header class="shrink-0 bg-navy-ink"><div class="mx-auto flex max-w-6xl items-center px-5 py-4 lg:px-8"><a href="/" class="flex min-w-0 items-center gap-2.5"><img src="/images/logo-royal-english.webp" alt="" width="127" height="128" class="size-12 shrink-0 object-contain" /><span class="truncate uppercase text-on-navy font-wordmark text-lg font-bold tracking-[0.2em]">Royal English</span></a></div></header>
+  <main data-legal class="atmos-ice flex min-h-0 flex-1 flex-col px-5 lg:px-8">
+    <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center py-[3svh] text-center">
+      <h1 class="text-balance text-[clamp(1.9rem,min(6vw,8svh),4.25rem)] font-medium leading-[1.1] text-navy">Ops! Esta página não foi encontrada.</h1>
+      <p class="mt-[2.5svh] max-w-2xl max-sm:text-sm text-pretty leading-relaxed text-navy-deep">O link pode estar quebrado ou a página foi movida. Volte ao início ou veja a trilha Fluent Speech logo abaixo.</p>
+      <a href="/" class="mt-[3.5svh] inline-flex h-12 items-center justify-center rounded-full bg-navy-ink px-9 text-xs font-semibold uppercase tracking-[0.12em] text-on-navy transition duration-300 hover:-translate-y-0.5 hover:brightness-125">Voltar ao início</a>
+
+      <div class="mt-[5svh] flex w-full items-center justify-between gap-6 rounded-2xl bg-navy-ink px-6 py-[3.5svh] text-center sm:px-12 sm:text-left max-sm:justify-center">
+        <div>
+          <h2 class="text-balance text-[clamp(1.5rem,min(5vw,4.5svh),2.25rem)] font-medium leading-tight text-on-navy">Página perdida. Caminho encontrado.</h2>
+          <p class="mt-2 text-on-navy-muted max-[700px]:hidden">Comece seu inglês do A1 ao B1+ com aulas de poucos minutos.</p>
+          <a href="/#vsl" class="mt-1 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-gold transition-colors hover:text-gold-light">Ver a trilha <span aria-hidden="true">↗</span></a>
+        </div>
+        <img src="/images/logo-royal-english.webp" alt="" width="127" height="128" class="hidden size-[clamp(5rem,16svh,8rem)] shrink-0 object-contain sm:block" />
+      </div>
+    </div>
+    <footer class="grid items-center gap-x-8 pb-[1svh] text-sm text-navy-deep max-md:justify-items-center md:grid-cols-[1fr_auto_1fr]">
+      <span>© 2026 Royal English</span>
+      <nav aria-label="Institucional" class="flex flex-wrap items-center justify-center gap-x-8">
+        <a href="/politica-de-cookies" class="inline-flex min-h-11 items-center hover:underline">Política de Cookies</a>
+        <a href="/termos-de-uso" class="inline-flex min-h-11 items-center hover:underline">Termos de Uso</a>
+        <a href="/politica-de-privacidade" class="inline-flex min-h-11 items-center hover:underline">Política de Privacidade</a>
+      </nav>
+      <span aria-hidden="true" class="max-md:hidden"></span>
+    </footer>
+  </main>
+  </div>
+</Layout>

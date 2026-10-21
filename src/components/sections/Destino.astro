@@ -1,0 +1,31 @@
+<section id="destino" data-destino class="atmos-ice blend-top-dark relative overflow-hidden flex min-h-svh items-center px-5 pb-6 pt-24 lg:px-8">
+  <div aria-hidden="true" class="grain absolute inset-0"></div>
+  <div aria-hidden="true" class="pointer-events-none absolute -left-24 -top-24 size-[28rem] bg-[radial-gradient(closest-side,rgb(217_179_106/0.22),transparent)]"></div>
+  <div aria-hidden="true" class="pointer-events-none absolute -bottom-24 -right-24 size-[30rem] bg-[radial-gradient(closest-side,rgb(18_52_91/0.12),transparent)]"></div>
+  <div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-navy-ink/12"></div>
+
+  <div class="relative mx-auto flex max-w-2xl lg:max-w-4xl flex-col items-center text-center">
+    <h2 data-s class="max-w-3xl text-balance text-[clamp(2rem,min(6.8svh,10vw),4.6rem)] font-medium leading-[1.1] text-navy">Agora <span data-hl="circle" class="relative inline-block whitespace-nowrap">imagine</span> você em <em data-hl="circle" class="relative inline-block whitespace-nowrap text-gold-ink font-medium">Londres</em>.</h2>
+
+    <div class="mt-[4svh] flex max-w-4xl flex-col gap-[2.4svh] font-serif text-[clamp(1.15rem,3.1svh,2.1rem)] italic leading-[1.45] text-navy-deep">
+      <p data-s class="sm:hidden">O sol do amanhecer acende o seu café, e a atendente sorri e pergunta de onde você é. A conversa ganha vida, e ao sair você percebe que <span data-hl="line" class="relative inline-block sm:whitespace-nowrap">falou em inglês desde a primeira palavra.</span> Uma onda de <span data-hl="circle" class="relative inline-block whitespace-nowrap">orgulho</span> enche o seu peito.</p>
+      <p data-s class="hidden sm:block">O sol do amanhecer acende o seu café quente, e o aroma doce toma conta da mesa. A atendente sorri e pergunta de onde você é.</p>
+      <p data-s class="hidden sm:block">Você responde, e a conversa ganha vida. Vocês riem, trocam histórias, e o tempo passa leve.</p>
+      <div data-s data-turn class="relative hidden sm:block">
+        <span data-glow aria-hidden="true" class="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[160%] w-[130%] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(closest-side,rgb(217_179_106/0.35),transparent)] opacity-0"></span>
+        <p class="text-[clamp(1.3rem,3.9svh,2.6rem)] leading-[1.35] text-navy">Ao sair, o ar fresco da manhã toca o seu rosto, e você percebe que <span data-hl="line" class="relative inline-block sm:whitespace-nowrap">falou em inglês desde a primeira palavra.</span> Uma onda de <span data-hl="circle" class="relative inline-block whitespace-nowrap">orgulho</span> enche o seu peito.</p>
+      </div>
+    </div>
+
+    <div class="mt-[5svh] space-y-[1svh] font-serif italic text-navy">
+      <p data-s class="text-balance text-[clamp(1.15rem,3.1svh,2.1rem)]">Um momento inesquecível, não é?</p>
+      <p data-s data-q class="text-balance text-[clamp(1.4rem,4.2svh,2.8rem)] text-gold-ink">Você concorda que isso vale cada centavo?</p>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  import { afterPaint } from '../../scripts/afterPaint';
+  afterPaint(() => import('../../scripts/destino')).then((m) => m.initDestino());
+</script>

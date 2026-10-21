@@ -1,0 +1,55 @@
+---
+import '../styles/global.css';
+const { title = 'Fluent Speech | Inglês do A1 ao B1+ | Royal English', description: desc, legal = false, noindex = false } = Astro.props;
+const description =
+  desc ?? 'Desenvolva seu inglês com uma trilha estruturada do A1 ao B1+, aulas curtas e práticas de poucos minutos para encaixar o inglês na sua rotina.';
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const ogImage = Astro.site ? new URL('/images/og-image.jpg', Astro.site).href : undefined;
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'Course',
+  name: 'Fluent Speech',
+  description,
+  provider: { '@type': 'Organization', name: 'Royal English' },
+};
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#071525" />
+    <title>{title}</title>
+    <meta name="author" content="Royal English" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Royal English" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {!legal && <link rel="preload" as="image" href="/images/hero-westminster-m.webp" media="(max-width: 767px)" fetchpriority="high" />}
+    {!legal && <link rel="preload" as="image" href="/images/hero-westminster.webp" media="(min-width: 768px)" fetchpriority="high" />}
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/cormorant.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/manrope.woff2" crossorigin />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {noindex && <meta name="robots" content="noindex,follow" />}
+    {!legal && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    {canonical && <meta property="og:url" content={canonical} />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:width" content="1200" />}
+    {ogImage && <meta property="og:image:height" content="630" />}
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+  </head>
+  <body>
+    <slot />
+    <script>
+      import { afterPaint } from '../scripts/afterPaint';
+      if (!document.querySelector('[data-legal]')) afterPaint(() => import('../scripts/main'));
+    </script>
+  </body>
+</html>

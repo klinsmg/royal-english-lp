@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Hero from '../components/sections/Hero.astro';
+import Vsl from '../components/sections/Vsl.astro';
+import Destino from '../components/sections/Destino.astro';
+import Problema from '../components/sections/Problema.astro';
+import Autoridade from '../components/sections/Autoridade.astro';
+import Depoimentos from '../components/sections/Depoimentos.astro';
+import Investimento from '../components/sections/Investimento.astro';
+import Duvidas from '../components/sections/Duvidas.astro';
+---
+<Layout>
+  <div class="min-h-screen bg-background">
+    <a href="#topo" class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-[100] focus-visible:rounded-lg focus-visible:bg-white focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-semibold focus-visible:text-navy">Pular para o conteúdo</a>
+    <Header />
+    <main id="topo">
+      <Hero /><Problema /><Vsl /><Destino />
+      <Investimento /><Depoimentos /><Autoridade /><Duvidas />
+    </main>
+    <Footer />
+  </div>
+</Layout>
