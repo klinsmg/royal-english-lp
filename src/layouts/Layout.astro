@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import SpeedInsights from '@vercel/speed-insights/astro';
 const { title = 'Fluent Speech | Inglês do A1 ao B1+ | Royal English', description: desc, legal = false, noindex = false } = Astro.props;
 const description =
   desc ?? 'Desenvolva seu inglês com uma trilha estruturada do A1 ao B1+, aulas curtas e práticas de poucos minutos para encaixar o inglês na sua rotina.';
@@ -48,6 +49,7 @@ const ld = {
   </head>
   <body>
     <slot />
+    <SpeedInsights />
     <script>
       import { afterPaint } from '../scripts/afterPaint';
       if (!document.querySelector('[data-legal]')) afterPaint(() => import('../scripts/main'));
