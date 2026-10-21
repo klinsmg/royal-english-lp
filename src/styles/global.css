@@ -228,9 +228,10 @@ a,button,[role=button]{touch-action:manipulation}
   #duvidas{contain-intrinsic-size:auto 575px}
 }
 
-/* Celulares de entrada (ex.: Galaxy A07): sem blur de GPU, grain nem aurora animada */
+/* Celulares de entrada (ex.: Galaxy A07): sem blur de GPU, grain, aurora animada nem borda giratória do card de oferta */
 @media (max-width:1023px){
   .aurora{filter:none;animation:none;will-change:auto}
+  .shine-spin{animation:none}
   .halo-electric{filter:none}
   .grain{display:none}
   .card-glass,.card-frost,.card-premium{-webkit-backdrop-filter:none;backdrop-filter:none}
