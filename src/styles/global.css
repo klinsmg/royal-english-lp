@@ -146,7 +146,7 @@ a,button,[role=button]{touch-action:manipulation}
   .vsl [data-rec-card] .wave-hover{display:none}
 }
 @media (max-width:1023px){.vsl:not(.is-pinned) [data-bg="1"],.vsl:not(.is-pinned) [data-bg="2"]{display:none}}
-  .vsl.is-pinned{height:100svh}
+  .vsl.is-pinned{height:100svh;height:100lvh}
   .vsl.is-pinned .vsl-stage{height:100svh;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr auto;padding-top:5rem;padding-bottom:1rem;gap:.75rem}
   .vsl.is-pinned .vsl-top{display:flex}
   .vsl.is-pinned .vsl-frame{display:none;position:absolute;inset:5.25rem 1.25rem 1.25rem;border:1px solid rgb(255 255 255/.1);border-radius:28px;pointer-events:none}

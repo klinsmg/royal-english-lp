@@ -39,7 +39,8 @@ export function initVsl() {
   const stick = (screens: number) => {
     const wrap = document.createElement('div');
     wrap.style.height = `${100 + screens * 100}svh`;
-    // com a barra do navegador recolhida a tela fica mais alta que 100svh: a faixa que sobra continua no azul-base da VSL
+    // a seção tem a altura máxima da tela (lvh) para o fundo cobrir o que aparece quando a barra do navegador recolhe; o palco segue em 100svh (nada cortado). Sem suporte a lvh, a 2ª linha é ignorada
+    wrap.style.height = `calc(${screens * 100}svh + 100lvh)`;
     wrap.style.background = 'var(--navy-ink, #071525)';
     root.before(wrap);
     wrap.append(root);
