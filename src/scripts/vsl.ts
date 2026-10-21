@@ -151,6 +151,83 @@ export function initVsl() {
     };
   };
 
+  // Celular em pé: mesma sessão fixa, mas as cenas trocam por classe (transição CSS), sem timeline presa à rolagem: leve em aparelhos simples
+  const pinnedLite = () => {
+    const n = scenes.length;
+    const W = WEIGHTS_ALL.slice(0, n);
+    const TOTAL = W.reduce((a, b) => a + b, 0);
+    const STARTS = W.map((_, i) => W.slice(0, i).reduce((a, b) => a + b, 0));
+    const counts = q<HTMLElement>('[data-count]');
+    const steps = q<HTMLElement>('[data-step]');
+    const done = new Set<number>();
+    root.classList.add('is-pinned', 'is-lite');
+    fit();
+    counts.forEach((el) => (el.textContent = '00'));
+    gsap.set('[data-stroke]', { scaleY: 0 });
+    gsap.set('[data-trail-line-method]', { scaleY: 0 });
+    gsap.set('[data-ring]', { strokeDashoffset: 100 });
+
+    // microanimações disparam uma vez, quando a cena entra
+    const enter = (i: number) => {
+      if (done.has(i)) return;
+      done.add(i);
+      if (i === 2) {
+        counts.forEach((el) => {
+          const o = { v: 0 };
+          gsap.to(o, { v: Number(el.dataset.count), duration: 1.1, ease: 'power2.out', onUpdate: () => (el.textContent = String(Math.round(o.v)).padStart(2, '0')) });
+        });
+        gsap.to('[data-ring]', { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' });
+      }
+      if (i === 3) {
+        gsap.to('[data-trail-line-method]', { scaleY: 1, duration: 1.4, ease: 'none' });
+        steps.forEach((s, k) => gsap.delayedCall(0.4 + k * 0.3, () => s.classList.add('is-lit')));
+      }
+      if (i === 5) gsap.to('[data-stroke]', { scaleY: 1, duration: 0.5, stagger: 0.08, delay: 0.5 });
+    };
+
+    let active = -1;
+    const show = (i: number) => {
+      scenes.forEach((sc, k) => { sc.classList.toggle('is-on', k === i); sc.classList.toggle('is-off', k !== i); });
+      tags.forEach((tg, k) => tg.classList.toggle('is-on', k === i));
+      bgs.forEach((b, k) => b.classList.toggle('is-on', k === 0 || (k === 1 ? i === 3 : i >= 4)));
+      chapters.forEach((c) => c.toggleAttribute('data-active', i >= Number(c.dataset.from) && i <= Number(c.dataset.to)));
+      const reached = i <= 1 ? 0 : i - 1;
+      ticks.forEach((m, j) => { m.dataset.s = j > reached ? '' : j === reached ? 'on' : 'past'; });
+      bar.style.transform = `scaleX(${reached / (ticks.length - 1)})`;
+      enter(i);
+    };
+    show(0);
+
+    const st = ScrollTrigger.create({
+      trigger: root,
+      start: 'top top',
+      end: () => '+=' + window.innerHeight * 0.8 * n,
+      pin: true,
+      anticipatePin: 1,
+      refreshPriority: 1,
+      onUpdate: (self) => {
+        root.classList.toggle('is-scrolled', self.progress > 0.01);
+        const t = self.progress * TOTAL;
+        let idx = 0;
+        STARTS.forEach((s, i) => { if (t >= s) idx = i; });
+        if (idx !== active) { active = idx; show(idx); }
+      },
+    });
+
+    goTo = (i) => window.scrollTo({ top: st.start + ((STARTS[i] + 0.5) / TOTAL) * (st.end - st.start), behavior: 'smooth' });
+
+    return () => {
+      root.classList.remove('is-pinned', 'is-lite', 'is-scrolled');
+      [...scenes, ...tags, ...bgs].forEach((e) => e.classList.remove('is-on', 'is-off'));
+      steps.forEach((s) => s.classList.remove('is-lit'));
+      counts.forEach((el) => (el.textContent = '0' + el.dataset.count));
+      bar.style.transform = '';
+      ticks.forEach((m) => delete m.dataset.s);
+      goTo = null;
+      fit();
+    };
+  };
+
   const mm = gsap.matchMedia();
 
   // ---------- Desktop: sessão fixa com as 7 cenas ----------
@@ -159,8 +236,11 @@ export function initVsl() {
   // ---------- Tablet em pé: a mesma sessão fixa, com as 7 cenas ----------
   mm.add('(min-width: 768px) and (max-width: 1023px) and (min-height: 560px)', () => pinned(WEIGHTS_ALL.length, true));
 
-  // ---------- Celular (em pé ou deitado): cenas empilhadas, rolagem normal (sem pin: leve em aparelhos simples) ----------
-  mm.add('(max-width: 767px), (max-width: 1023px) and (max-height: 559px)', () => {
+  // ---------- Celular em pé: sessão fixa leve ----------
+  mm.add('(max-width: 767px) and (min-height: 560px)', () => pinnedLite());
+
+  // ---------- Celular deitado (pouca altura): cenas empilhadas, rolagem normal ----------
+  mm.add('(max-width: 1023px) and (max-height: 559px)', () => {
     const ins = q<HTMLElement>('[data-in]');
     gsap.set(ins, { opacity: 0, y: 24 });
     ScrollTrigger.batch(ins, {

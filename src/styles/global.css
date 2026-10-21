@@ -238,3 +238,14 @@ a,button,[role=button]{touch-action:manipulation}
   header.backdrop-blur-xl{background-color:rgb(7 21 37/.94)}
 }
 .pin-spacer{background:#071525}
+
+/* VSL leve (celular): troca de cena por classe, só opacity/transform */
+.vsl.is-lite .vsl-scene{opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s}
+.vsl.is-lite .vsl-scene.is-on{opacity:1;visibility:visible;transition:opacity .35s ease}
+.vsl.is-lite .selo{opacity:0;transition:opacity .3s}
+.vsl.is-lite .selo.is-on{opacity:1}
+.vsl.is-lite [data-bg="1"],.vsl.is-lite [data-bg="2"]{opacity:0;transition:opacity .6s}
+.vsl.is-lite [data-bg].is-on{opacity:1}
+.vsl.is-lite .vsl-fill{transition:transform .4s ease}
+.vsl.is-lite .vsl-scene.is-on [data-in]{animation:vsl-in .5s ease-out both}
+@keyframes vsl-in{from{opacity:0;transform:translateY(16px)}}
