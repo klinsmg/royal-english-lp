@@ -35,6 +35,17 @@ export function initVsl() {
     inners.forEach((i, n) => { if (k[n] < 1) i.style.zoom = String(k[n]); });
   };
 
+  // Fixa a sessão com position:sticky num wrapper alto (o pin do GSAP troca static/fixed/absolute e o Chrome conta isso como CLS)
+  const stick = (screens: number) => {
+    const wrap = document.createElement('div');
+    wrap.style.height = `${100 + screens * 100}svh`;
+    root.before(wrap);
+    wrap.append(root);
+    root.style.position = 'sticky';
+    root.style.top = '0';
+    return { wrap, undo: () => { wrap.before(root); wrap.remove(); root.style.position = root.style.top = ''; } };
+  };
+
   // Sessão fixa com as n primeiras cenas em sequência; devolve a limpeza
   const pinned = (n: number, mobile: boolean) => {
     const W = WEIGHTS_ALL.slice(0, n);
@@ -48,6 +59,7 @@ export function initVsl() {
     const S = scenes.slice(0, n);
 
     root.classList.add('is-pinned');
+    const sticky = stick(0.9 * n);
     fit();
     gsap.set(S.slice(1), { autoAlpha: 0 });
     gsap.set(tags.slice(1), { autoAlpha: 0 });
@@ -67,12 +79,10 @@ export function initVsl() {
     const tl: gsap.core.Timeline = gsap.timeline({
       defaults: { ease: 'power3.out' },
       scrollTrigger: {
-        trigger: root,
+        trigger: sticky.wrap,
         start: 'top top',
-        end: () => '+=' + window.innerHeight * 0.9 * n,
-        pin: true,
+        end: 'bottom bottom',
         scrub: 0.6,
-        anticipatePin: 1,
         refreshPriority: 1,
         snap: { snapTo: (p: number) => SNAPS.reduce((best, s) => (Math.abs(s - p) < Math.abs(best - p) ? s : best), SNAPS[0]), directional: false, inertia: false, duration: { min: 0.2, max: 0.6 }, delay: 0.08 },
         onUpdate: (self) => {
@@ -141,6 +151,7 @@ export function initVsl() {
     };
 
     return () => {
+      sticky.undo();
       root.classList.remove('is-pinned');
       scenes.forEach((sc) => sc.classList.remove('is-off'));
       counts.forEach((el) => (el.textContent = '0' + el.dataset.count));
@@ -162,6 +173,7 @@ export function initVsl() {
     const steps = q<HTMLElement>('[data-step]');
     const done = new Set<number>();
     root.classList.add('is-pinned', 'is-lite');
+    const sticky = stick(0.8 * n);
     fit();
     // atraso em cascata da entrada dos itens de cada cena (CSS usa --d)
     scenes.forEach((sc) => sc.querySelectorAll<HTMLElement>('[data-in]').forEach((el, k) => el.style.setProperty('--d', String(Math.min(k, 8)))));
@@ -202,11 +214,9 @@ export function initVsl() {
     show(0);
 
     const st = ScrollTrigger.create({
-      trigger: root,
+      trigger: sticky.wrap,
       start: 'top top',
-      end: () => '+=' + window.innerHeight * 0.8 * n,
-      pin: true,
-      anticipatePin: 1,
+      end: 'bottom bottom',
       refreshPriority: 1,
       // a rolagem sempre para com uma cena inteira na tela
       snap: { snapTo: STARTS.map((s, i) => (s + W[i] / 2) / TOTAL), duration: { min: 0.2, max: 0.5 }, delay: 0.06, ease: 'power1.inOut', inertia: false },
@@ -237,6 +247,7 @@ export function initVsl() {
     return () => {
       stage_.removeEventListener('touchstart', down);
       stage_.removeEventListener('touchend', up);
+      sticky.undo();
       root.classList.remove('is-pinned', 'is-lite', 'is-scrolled');
       [...scenes, ...tags, ...bgs].forEach((e) => e.classList.remove('is-on', 'is-off', 'is-past'));
       steps.forEach((s) => s.classList.remove('is-lit'));
