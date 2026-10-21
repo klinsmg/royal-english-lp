@@ -39,6 +39,8 @@ export function initVsl() {
   const stick = (screens: number) => {
     const wrap = document.createElement('div');
     wrap.style.height = `${100 + screens * 100}svh`;
+    // com a barra do navegador recolhida a tela fica mais alta que 100svh: a faixa que sobra continua no azul-base da VSL
+    wrap.style.background = 'var(--navy-ink, #071525)';
     root.before(wrap);
     wrap.append(root);
     root.style.position = 'sticky';
