@@ -6,5 +6,6 @@ const site = process.env.SITE_URL || undefined;
 
 export default defineConfig({
   site,
+  build: { inlineStylesheets: 'always' },
   vite: { plugins: [tailwindcss()] },
 });
