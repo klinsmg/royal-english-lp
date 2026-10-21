@@ -227,3 +227,13 @@ a,button,[role=button]{touch-action:manipulation}
   #minha-historia{contain-intrinsic-size:auto 100svh}
   #duvidas{contain-intrinsic-size:auto 575px}
 }
+
+/* Celulares de entrada (ex.: Galaxy A07): sem blur de GPU, grain nem aurora animada */
+@media (max-width:1023px){
+  .aurora{filter:none;animation:none;will-change:auto}
+  .halo-electric{filter:none}
+  .grain{display:none}
+  .card-glass,.card-frost,.card-premium{-webkit-backdrop-filter:none;backdrop-filter:none}
+  [class*="backdrop-blur"]{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  header.backdrop-blur-xl{background-color:rgb(7 21 37/.94)}
+}
