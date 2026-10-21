@@ -249,3 +249,4 @@ a,button,[role=button]{touch-action:manipulation}
 .vsl.is-lite .vsl-fill{transition:transform .4s ease}
 .vsl.is-lite .vsl-scene.is-on [data-in]{animation:vsl-in .5s ease-out both}
 @keyframes vsl-in{from{opacity:0;transform:translateY(16px)}}
+.vsl.is-lite .vsl-hint{display:none}
