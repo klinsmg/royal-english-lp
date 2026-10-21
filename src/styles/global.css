@@ -228,10 +228,13 @@ a,button,[role=button]{touch-action:manipulation}
   #duvidas{contain-intrinsic-size:auto 575px}
 }
 
-/* Celulares de entrada (ex.: Galaxy A07): sem blur de GPU, grain, aurora animada nem borda giratória do card de oferta */
+/* Celulares de entrada (ex.: Galaxy A07): sem blur de GPU, grain nem aurora animada; borda giratória do card de oferta mais barata (camada circular do tamanho mínimo, 20 fps) */
 @media (max-width:1023px){
   .aurora{filter:none;animation:none;will-change:auto}
-  .shine-spin{animation:none}
+  .shine-spin{animation-timing-function:steps(80,end);filter:none}
+  @supports (width:1cqw){
+    .shine-spin{inset:auto;left:50%;top:50%;width:calc(100cqw + 100cqh);height:auto;aspect-ratio:1;translate:-50% -50%;border-radius:50%}
+  }
   .halo-electric{filter:none}
   .grain{display:none}
   .card-glass,.card-frost,.card-premium{-webkit-backdrop-filter:none;backdrop-filter:none}
