@@ -156,11 +156,11 @@ export function initVsl() {
   // ---------- Desktop: sessão fixa com as 7 cenas ----------
   mm.add('(min-width: 1024px)', () => pinned(WEIGHTS_ALL.length, false));
 
-  // ---------- Celular/tablet em pé: a mesma sessão fixa, com as 7 cenas ----------
-  mm.add('(max-width: 1023px) and (min-height: 560px)', () => pinned(WEIGHTS_ALL.length, true));
+  // ---------- Tablet em pé: a mesma sessão fixa, com as 7 cenas ----------
+  mm.add('(min-width: 768px) and (max-width: 1023px) and (min-height: 560px)', () => pinned(WEIGHTS_ALL.length, true));
 
-  // ---------- Celular deitado (pouca altura): todas as cenas empilhadas, entrada em cascata ----------
-  mm.add('(max-width: 1023px) and (max-height: 559px)', () => {
+  // ---------- Celular (em pé ou deitado): cenas empilhadas, rolagem normal (sem pin: leve em aparelhos simples) ----------
+  mm.add('(max-width: 767px), (max-width: 1023px) and (max-height: 559px)', () => {
     const ins = q<HTMLElement>('[data-in]');
     gsap.set(ins, { opacity: 0, y: 24 });
     ScrollTrigger.batch(ins, {
