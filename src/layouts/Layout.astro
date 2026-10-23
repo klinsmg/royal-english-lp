@@ -1,17 +1,48 @@
 ---
 import '../styles/global.css';
 import SpeedInsights from '@vercel/speed-insights/astro';
+import { faq } from '../data/faq';
 const { title = 'Fluent Speech | Inglês do A1 ao B1+ | Royal English', description: desc, legal = false, noindex = false } = Astro.props;
 const description =
   desc ?? 'Desenvolva seu inglês com uma trilha estruturada do A1 ao B1+, aulas curtas e práticas de poucos minutos para encaixar o inglês na sua rotina.';
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const ogImage = Astro.site ? new URL('/images/og-image.jpg', Astro.site).href : undefined;
+const origin = Astro.site?.origin ?? '';
+const org = {
+  '@type': 'Organization',
+  '@id': origin + '/#org',
+  name: 'Royal English',
+  url: origin + '/',
+  logo: origin + '/images/logo-royal-english.png',
+  sameAs: [
+    'https://www.instagram.com/royalenglishbr/',
+    'https://www.tiktok.com/@teachernajila',
+    'https://www.youtube.com/@teachernajila',
+  ],
+};
 const ld = {
   '@context': 'https://schema.org',
-  '@type': 'Course',
-  name: 'Fluent Speech',
-  description,
-  provider: { '@type': 'Organization', name: 'Royal English' },
+  '@graph': [
+    org,
+    { '@type': 'WebSite', '@id': origin + '/#site', url: origin + '/', name: 'Royal English', inLanguage: 'pt-BR', publisher: { '@id': origin + '/#org' } },
+    {
+      '@type': 'Course',
+      name: 'Fluent Speech',
+      description,
+      inLanguage: 'pt-BR',
+      educationalLevel: 'A1–B1+',
+      teaches: 'Inglês',
+      timeRequired: 'PT5M',
+      provider: { '@id': origin + '/#org' },
+      instructor: { '@type': 'Person', name: 'Nágila (Teacher Najila)', sameAs: ['https://www.tiktok.com/@teachernajila', 'https://www.youtube.com/@teachernajila'] },
+      hasCourseInstance: { '@type': 'CourseInstance', courseMode: 'online', courseWorkload: 'PT5M' },
+      offers: { '@type': 'Offer', price: '747', priceCurrency: 'BRL', availability: 'https://schema.org/InStock', url: origin + '/' },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+    },
+  ],
 };
 ---
 <!doctype html>
@@ -23,6 +54,12 @@ const ld = {
     <meta name="color-scheme" content="only light" />
     <title>{title}</title>
     <meta name="author" content="Royal English" />
+    <meta name="robots" content={noindex ? 'noindex,follow' : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'} />
+    <meta name="geo.region" content="BR" />
+    <meta name="content-language" content="pt-BR" />
+    <meta property="og:locale" content="pt_BR" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -38,14 +75,16 @@ const ld = {
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    {noindex && <meta name="robots" content="noindex,follow" />}
+    
     {!legal && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+    {canonical && <link rel="alternate" hreflang="pt-BR" href={canonical} />}
     {canonical && <link rel="canonical" href={canonical} />}
     {canonical && <meta property="og:url" content={canonical} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
     {ogImage && <meta property="og:image:width" content="1200" />}
     {ogImage && <meta property="og:image:height" content="630" />}
     {ogImage && <meta name="twitter:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:alt" content="Royal English — Fluent Speech, inglês do A1 ao B1+" />}
   </head>
   <body>
     <slot />
